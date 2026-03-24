@@ -1,154 +1,48 @@
 import streamlit as st
 import random
+from streamlit_keyup import st_keyup # <--- Importiamo il nuovo componente live
 
-# Configurazione della pagina (titolo nella scheda del browser e icona)
 st.set_page_config(page_title="Quiz Istituzioni", page_icon="🇮🇹", layout="centered")
 
-# Il tuo dizionario di domande (qui ne metto 4 di esempio, tu metti le tue 100)
 domande_risposte = {
     "Qual è la legge fondamentale dello Stato italiano?": "costituzione",
-    "In quale anno è entrata in vigore la Costituzione?": "1948",
     "L'Italia è una repubblica... (forma di governo)?": "parlamentare",
-    "Quale forma di Stato ha scelto l'Italia nel 1946?": "repubblica",
-    "Su cosa è fondata l'Italia secondo l'articolo 1?": "lavoro",
-    "In che mese si celebra la Festa della Repubblica?": "giugno",
-    "Di che tipo è il bicameralismo italiano?": "perfetto",
     "Quale potere detiene il Parlamento?": "legislativo",
-    "Qual è la Camera bassa del Parlamento italiano?": "camera",
-    "Qual è la Camera alta del Parlamento italiano?": "senato",
-    "Come si chiama il palazzo sede della Camera dei Deputati?": "montecitorio",
-    "Come si chiama il palazzo sede del Senato?": "madama",
-    "Quanti sono i deputati eletti (dal 2022)?": "400",
-    "Quanti sono i senatori eletti (dal 2022)?": "200",
-    "Quanti anni dura normalmente una legislatura?": "5",
-    "A quale età minima si può votare per eleggere il Parlamento?": "18",
-    "Qual è l'età minima per essere eletti alla Camera?": "25",
-    "Qual è l'età minima per essere eletti al Senato?": "40",
-    "Chi elegge direttamente il Parlamento?": "cittadini",
-    "Come si chiamano i senatori non eletti ma nominati per altissimi meriti?": "senatori a vita",
-    "Chi ha il potere di sciogliere le Camere in anticipo?": "presidente repubblica",
-    "Come si chiama la legge sui conti pubblici approvata ogni anno?": "bilancio",
-    "Come si chiama il testo prima di essere approvato e diventare legge?": "disegno",
-    "Quale potere istituzionale detiene il Governo?": "esecutivo",
-    "Chi è a capo del Governo?": "presidente consiglio",
-    "Chi è il Presidente del Consiglio nell'attuale governo del 2026?": "meloni",
-    "A quale partito appartiene l'attuale Premier?": "fratelli d'italia",
-    "Quale storico partito di governo è guidato da Matteo Salvini?": "lega",
-    "Quale partito di governo è stato fondato da Silvio Berlusconi?": "forza italia",
-    "Come si chiama la quarta forza centrista dell'attuale coalizione di destra?": "noi moderati",
-    "Come si chiama il palazzo sede del Governo?": "palazzo chigi",
-    "Cosa deve ottenere il Governo dal Parlamento per operare a pieno?": "fiducia",
-    "Come si chiama la riunione collegiale del Premier e dei Ministri?": "consiglio ministri",
-    "Se il Parlamento vota contro il Governo, quest'ultimo deve dare le...?": "dimissioni",
-    "Atto del Governo con forza di legge emanato in casi di necessità e urgenza?": "decreto legge",
-    "Entro quanti giorni il Parlamento deve convertire un decreto legge?": "60",
-    "Atto del Governo emanato su indicazione e perimetro tracciato dal Parlamento?": "decreto legislativo",
-    "Chi firma la nomina ufficiale dei Ministri?": "presidente repubblica",
-    "Quale Ministero gestisce le forze di polizia e la sicurezza?": "interno",
-    "Quale Ministero gestisce le scuole?": "istruzione",
-    "Quale Ministero gestisce i conti pubblici e le tasse?": "economia",
-    "Quale Ministero gestisce il sistema ospedaliero nazionale?": "salute",
-    "Quale Ministero gestisce i rapporti tra l'Italia e gli altri Paesi?": "esteri",
-    "Quale Ministero si occupa dell'organizzazione di tribunali e carceri?": "giustizia",
-    "Chi è il Garante della Costituzione in Italia?": "presidente repubblica",
-    "Chi ricopre il ruolo di Presidente della Repubblica nel 2026?": "mattarella",
-    "Come si chiama il palazzo in cui risiede il Presidente della Repubblica?": "quirinale",
-    "Quanti anni dura il mandato del Presidente della Repubblica?": "7",
-    "Qual è l'età minima per poter essere eletti Presidente della Repubblica?": "50",
-    "Il Presidente della Repubblica uscente può essere rieletto (sì/no)?": "sì",
-    "Chi elegge il Presidente della Repubblica in seduta comune?": "parlamento",
-    "I rappresentanti inviati dalle Regioni per eleggere il Capo dello Stato sono i...?": "delegati",
-    "Chi ha il comando formale delle Forze Armate?": "presidente repubblica",
-    "Quale organo di garanzia della magistratura è presieduto dal Capo dello Stato?": "csm",
-    "Il Presidente della Repubblica prima di pubblicare le leggi le...?": "promulga",
-    "Quante volte il Presidente può rifiutarsi di firmare una legge e rimandarla alle Camere?": "una",
-    "Come si chiama il potere del Capo dello Stato di cancellare o ridurre una pena?": "grazia",
-    "Cosa diventa automaticamente un ex Presidente della Repubblica alla fine del mandato?": "senatore a vita",
-    "Quale organo giudica se una legge rispetta o meno la Costituzione?": "corte costituzionale",
-    "Come viene chiamata la Corte Costituzionale in base al palazzo in cui ha sede?": "consulta",
-    "Da quanti giudici è composta la Corte Costituzionale?": "15",
-    "Quanti anni dura il mandato di un giudice costituzionale?": "9",
-    "La Corte Costituzionale può giudicare il Capo dello Stato per alto...?": "tradimento",
-    "Quale potere istituzionale detiene la Magistratura?": "giudiziario",
-    "Secondo la Costituzione, i giudici sono soggetti soltanto alla...?": "legge",
-    "L'organo di autogoverno dei magistrati (scrivi la sigla)?": "csm",
-    "Qual è il massimo grado di giudizio nel sistema giudiziario italiano?": "cassazione",
-    "Il magistrato che indaga e sostiene l'accusa in tribunale è il pubblico...?": "ministero",
-    "In Italia, la responsabilità penale è sempre...?": "personale",
-    "Quanti sono i gradi di giudizio ordinari in Italia?": "3",
-    "L'Italia è divisa in quanti enti territoriali autonomi di vasta area (Regioni)?": "20",
-    "Quante sono le Regioni a statuto speciale?": "5",
-    "L'organo che approva le leggi a livello locale è il consiglio...?": "regionale",
-    "Il capo di una Regione è comunemente chiamato...?": "governatore",
-    "L'ente locale più vicino ai cittadini che amministra le città?": "comune",
-    "Chi è la figura politica a capo dell'amministrazione di un Comune?": "sindaco",
-    "Qual è l'ente territoriale di coordinamento intermedio tra Comune e Regione?": "provincia",
-    "Come si chiama lo strumento con cui i cittadini votano per cancellare una legge?": "referendum",
-    "Quante firme di cittadini servono per proporre un referendum abrogativo?": "500000",
-    "La soglia minima di votanti (50%+1) affinché un referendum sia valido?": "quorum",
-    "Quanti consigli regionali servono per poter richiedere un referendum abrogativo?": "5",
-    "La Costituzione italiana può essere modificata solo tramite una legge...?": "costituzionale",
-    "Per modificare la Costituzione serve in Parlamento la maggioranza...?": "assoluta",
-    "Esiste in Italia il referendum per proporre nuove leggi nazionali (sì/no)?": "no",
-    "Secondo l'art. 3, tutti i cittadini hanno pari dignità...?": "sociale",
-    "Secondo l'art. 11, l'Italia ripudia in modo assoluto la...?": "guerra",
-    "Chi sta al vertice della direzione politica di un singolo dicastero?": "ministro",
-    "L'accordo storico del 1929 tra Stato Italiano e Chiesa Cattolica sono i Patti...?": "lateranensi",
-    "L'Italia è uno degli Stati fondatori dell'Unione...?": "europea",
-    "L'Italia fa parte dell'alleanza militare internazionale atlantica chiamata...?": "nato",
-    "Secondo l'articolo 67, i membri del Parlamento rappresentano l'intera...?": "nazione",
-    "La riunione eccezionale in cui Camera e Senato votano insieme si chiama seduta...?": "comune",
-    "Chi sostituisce il Capo dello Stato se è temporaneamente impossibilitato? Presidente del...?": "senato",
-    "I Ministri possono ricoprire contemporaneamente anche la carica di parlamentari (sì/no)?": "sì",
-    "Il voto in Italia è personale, eguale, libero e...?": "segreto",
-    "L'esercizio del diritto di voto non è un obbligo di legge ma un dovere...?": "civico",
-    "Qual è il primo colore della bandiera italiana partendo dall'asta?": "verde",
-    "L'inno nazionale italiano è storicamente conosciuto come Inno di...?": "mameli",
-    "I Ministri che non sono a capo di un dicastero con portafoglio di spesa si chiamano Ministri senza...?": "portafoglio",
-    "Come si chiama la tenuta estiva utilizzata dal Presidente della Repubblica?": "castelporziano"
+    "Chi è il Presidente del Consiglio nell'attuale governo del 2026?": "meloni"
 }
 
-# --- GESTIONE DELLO STATO (Memoria dell'app) ---
-# Quando l'app parte la prima volta, mescoliamo le domande e partiamo da zero
 if 'quiz_attivo' not in st.session_state:
     st.session_state.lista_domande = list(domande_risposte.keys())
     random.shuffle(st.session_state.lista_domande)
     st.session_state.indice = 0
     st.session_state.quiz_attivo = True
 
-# --- INTERFACCIA GRAFICA ---
 st.title("🇮🇹 Quiz sulle Istituzioni Italiane")
 st.markdown("---")
 
-# Se ci sono ancora domande da fare
 if st.session_state.indice < len(st.session_state.lista_domande):
     domanda_corrente = st.session_state.lista_domande[st.session_state.indice]
     
-    # Mostriamo a che punto siamo
     st.subheader(f"Domanda {st.session_state.indice + 1} di {len(st.session_state.lista_domande)}")
     st.info(f"**{domanda_corrente}**")
     
-    # Casella di testo per la risposta
-    # (Usiamo una chiave dinamica così si "pulisce" a ogni nuova domanda)
-    risposta_utente = st.text_input("Scrivi la tua risposta e premi Invio:", key=f"input_{st.session_state.indice}")
+    # QUI LA MAGIA: usiamo st_keyup al posto del normale text_input.
+    # Il sistema legge in tempo reale ogni lettera digitata.
+    risposta_utente = st_keyup("Scrivi la risposta (il sistema la convalida in automatico):", key=f"input_{st.session_state.indice}")
     
-    # Controllo della risposta quando l'utente digita qualcosa
     if risposta_utente:
         risposta_giusta = domande_risposte[domanda_corrente].strip().lower()
         
+        # Appena la parola digitata corrisponde a quella giusta, scatta in avanti!
         if risposta_utente.strip().lower() == risposta_giusta:
-            st.success("✅ Corretto! Passiamo alla prossima...")
+            st.success("✅ Esatto!")
             st.session_state.indice += 1
-            st.rerun() # Ricarica la pagina per mostrare la domanda successiva
-        else:
-            st.error("❌ Sbagliato, ritenta!")
+            st.rerun()
 
-# Se le domande sono finite
 else:
-    st.balloons() # Animazione di festa sullo schermo!
+    st.balloons()
     st.success("🎉 COMPLIMENTI! Hai completato tutte le domande del quiz!")
     
-    # Bottone per ricominciare
     if st.button("🔄 Riavvia il Quiz"):
-        del st.session_state.quiz_attivo # Cancella la memoria
-        st.rerun() # Ricarica da zero
+        del st.session_state.quiz_attivo
+        st.rerun()
